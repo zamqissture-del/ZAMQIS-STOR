@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZAMQIS STORE | Admin Dashboard</title>
+<style>
+:root{--bg:#08051c;--panel:#120c30;--purple:#a000ff;--cyan:#35eaff;--muted:#c8bee8}
+*{box-sizing:border-box}
+body{margin:0;color:#fff;font:15px/1.5 Arial,sans-serif;background:radial-gradient(ellipse at 15% 0%,#32105f,transparent 40%),radial-gradient(ellipse at 95% 80%,#10235c,transparent 40%),var(--bg)}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;color:white;border:0;font-weight:bold}
+.top{padding:12px 4%;display:flex;justify-content:space-between;gap:10px;background:#08051df2;border-bottom:1px solid #7d36ff}
+.wrap{max-width:1250px;margin:auto;padding:22px 18px}
+.brand{font-size:25px;font-weight:1000;letter-spacing:2px}
+.brand span{color:var(--cyan)}
+.hero{padding:22px 25px;margin-bottom:18px;text-align:center;border:1px solid #903cff;border-radius:17px;background:linear-gradient(110deg,#241052,#111c50,#180735);box-shadow:0 0 22px #9400ff}
+.hero h1{margin:0;font-size:clamp(28px,5vw,46px);text-shadow:0 0 16px #a000ff}
+.hero p{color:#d5c8ff;margin:5px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{padding:17px;background:#160e3b;border:1px solid #6538bc;border-radius:13px;box-shadow:0 0 10px #7e27c944}
+.stat b{display:block;font-size:24px;color:#ffe45c}
+.panel{padding:19px;margin:14px 0;background:linear-gradient(145deg,#130d32,#09091e);border:1px solid #8d39ff;border-radius:15px;box-shadow:0 0 14px #9200ff55}
+.panel h2{margin:0 0 12px}
+label{display:block;margin:11px 0 5px;color:#ddd3ff;font-size:13px}
+input,select{width:100%;padding:12px;color:#fff;background:#17113b;border:1px solid #6549b2;border-radius:9px;outline:none}
+input:focus,select:focus{border-color:var(--cyan)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{padding:11px 16px;margin:9px 6px 0 0;border-radius:9px;background:linear-gradient(100deg,#8500ed,#315cff);box-shadow:0 0 10px #8b32ff55}
+.danger{background:linear-gradient(90deg,#9c174c,#d12b52)}
+.soft{background:#251653;border:1px solid #6744a9}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;margin:8px 0;background:#1a1241;border:1px solid #49327c;border-radius:10px}
+.item small{color:var(--cyan)}
+.qris{width:100%;max-width:200px;display:block;padding:7px;margin:12px 0;background:white;border-radius:10px}
+.asset-preview{display:block;width:100%;max-width:420px;max-height:150px;object-fit:cover;border:1px solid #744cff;border-radius:10px;margin:9px 0;background:#08051c}
+.asset-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.asset-box{padding:12px;background:#17113b;border:1px solid #49327c;border-radius:12px}
+.asset-box img{width:100%;height:105px;object-fit:cover;border-radius:8px;background:#08051c}
+.hint{color:#bdb1df;font-size:12px}
+.muted{font-size:12px;color:var(--muted)}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginbox{width:100%;max-width:390px;padding:26px;background:#130d32;border:1px solid #a000ff;border-radius:17px;box-shadow:0 0 25px #a000ff66}
+.loginbox h1{text-align:center}
+.loginbox p{text-align:center;color:var(--muted)}
+.hidden{display:none!important}
+.headrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.top{font-size:12px}.wrap{padding:15px 11px}}
+</style>
+</head>
+<body>
+
+<div id="login">
+ <div class="loginbox">
+  <div style="text-align:center;font-size:36px">👑</div>
+  <h1>ZAMQIS ADMIN</h1>
+  <p>Login untuk mengelola toko</p>
+  <label>Username</label>
+  <input id="username" placeholder="Username" autocomplete="username">
+  <label>Password</label>
+  <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="btn" style="width:100%;margin-top:17px" onclick="loginAdmin()">LOGIN ADMIN</button>
+  <p id="error" style="color:#ff6b9d"></p>
+  <p class="muted">Kembali ke <a href="index.html" style="color:#35eaff">halaman pembeli</a></p>
+ </div>
+</div>
+
+<div id="dashboard" class="hidden">
+ <div class="top">
+  <a class="brand" href="index.html">ZAMQIS <span>ADMIN</span></a>
+  <a href="index.html">↗ Website Pembeli</a>
+ </div>
+
+ <div class="wrap">
+  <div class="hero">
+   <h1>👑 ADMIN DASHBOARD</h1>
+   <p>Kelola toko ZAMQIS STORE dengan mudah!</p>
+  </div>
+
+  <div class="headrow">
+   <div>
+    <h2 style="margin:0">Dashboard Toko</h2>
+    <p class="muted">Atur produk, pembayaran, dan pesanan.</p>
+   </div>
+   <button class="btn danger" onclick="logout()">KELUAR</button>
+  </div>
+
+  <div class="grid">
+   <div class="stat">Total Paket<b id="statPackages">0</b></div>
+   <div class="stat">Total Pesanan Lokal<b id="statOrders">0</b></div>
+   <div class="stat">Status QRIS<b id="statQRIS">Belum diatur</b></div>
+  </div>
+
+  <section class="panel">
+   <h2>⚙️ Pengaturan Toko</h2>
+   <label>Nomor WhatsApp Admin</label>
+   <input id="waNumber" placeholder="6281234567890">
+   <label>Upload Gambar QRIS (maks. 700 KB)</label>
+   <input id="qrisFile" type="file" accept="image/*">
+   <img id="qrisPreview" class="qris hidden" alt="Preview QRIS">
+   <button class="btn" onclick="saveSettings()">SIMPAN PENGATURAN</button>
+   <button class="btn danger" onclick="removeQRIS()">HAPUS QRIS</button>
+  </section>
+
+  <section class="panel">
+   <h2>🖼️ Ganti Banner & Logo Game</h2>
+   <p class="hint">Upload gambar sendiri agar tampilan halaman pembeli lebih mirip desain contoh. Gambar akan diperkecil otomatis sebelum disimpan.</p>
+
+   <label>Banner utama toko</label>
+   <input id="bannerFile" type="file" accept="image/*">
+   <img id="bannerPreview" class="asset-preview hidden" alt="Preview banner">
+   <button class="btn danger" onclick="removeAsset('zamqisBanner','bannerPreview')">HAPUS BANNER</button>
+
+   <div class="asset-row">
+    <div class="asset-box">
+     <b>Mobile Legends</b>
+     <input id="mlFile" type="file" accept="image/*">
+     <img id="mlPreview" alt="Logo Mobile Legends">
+     <button class="btn danger" onclick="removeAsset('zamqisLogoML','mlPreview')">HAPUS</button>
+    </div>
+
+    <div class="asset-box">
+     <b>PUBG Mobile</b>
+     <input id="pubgFile" type="file" accept="image/*">
+     <img id="pubgPreview" alt="Logo PUBG Mobile">
+     <button class="btn danger" onclick="removeAsset('zamqisLogoPUBG','pubgPreview')">HAPUS</button>
+    </div>
+
+    <div class="asset-box">
+     <b>Free Fire</b>
+     <input id="ffFile" type="file" accept="image/*">
+     <img id="ffPreview" alt="Logo Free Fire">
+     <button class="btn danger" onclick="removeAsset('zamqisLogoFF','ffPreview')">HAPUS</button>
+    </div>
+   </div>
+
+   <button class="btn" onclick="saveBrandImages()">SIMPAN BANNER & LOGO</button>
+  </section>
+
+  <section class="panel">
+   <h2>📦 Tambah Paket Top Up</h2>
+   <label>Game</label>
+   <select id="game">
+    <option>Mobile Legends</option>
+    <option>PUBG Mobile</option>
+    <option>Free Fire</option>
+   </select>
+   <div class="row">
+    <div>
+     <label>Nama Paket</label>
+     <input id="name" placeholder="Contoh: 86 Diamond">
+    </div>
+    <div>
+     <label>Harga (Rupiah)</label>
+     <input id="price" type="number" min="1" placeholder="20000">
+    </div>
+   </div>
+   <button class="btn" onclick="addPackage()">TAMBAH PAKET</button>
+   <button class="btn soft" onclick="resetPrices()">RESET PAKET AWAL</button>
+  </section>
+
+  <section class="panel">
+   <h2>📋 Kelola Paket</h2>
+   <div id="packageList"></div>
+  </section>
+
+  <section class="panel">
+   <h2>🧾 Pesanan Tersimpan di Browser Ini</h2>
+   <p class="muted">Daftar ini hanya terlihat pada browser/perangkat yang menyimpan pesanan.</p>
+   <div id="orderList"></div>
+   <button class="btn danger" onclick="clearOrders()">HAPUS RIWAYAT LOKAL</button>
+  </section>
+
+  <section class="panel">
+   <h2>🔐 Ganti Password Admin</h2>
+   <label>Password Baru (minimal 8 karakter)</label>
+   <input id="newPassword" type="password" placeholder="Password baru">
+   <button class="btn" onclick="changePassword()">SIMPAN PASSWORD</button>
+  </section>
+
+  <p class="muted">Penting: GitHub Pages bersifat statis. localStorage hanya tersimpan pada browser/perangkat yang menggunakannya. Login berbasis JavaScript ini bukan sistem keamanan produksi; jangan simpan data sensitif. Untuk sinkronisasi pelanggan dan admin lintas perangkat, gunakan backend/database.</p>
+ </div>
+</div>
+
+<script>
+const DEFAULTS={
+ "Mobile Legends":[["86 Diamond",20000],["172 Diamond",39000],["257 Diamond",58000],["514 Diamond",95000]],
+ "PUBG Mobile":[["60 UC",15000],["325 UC",75000],["660 UC",145000]],
+ "Free Fire":[["70 Diamond",10000],["140 Diamond",19000],["355 Diamond",47000],["720 Diamond",92000]]
+};
+
+const USER="admin";
+const INITIAL_PASS="Zamqis#2026";
+
+function prices(){
+ try{return JSON.parse(localStorage.getItem("zamqisPrices"))||JSON.parse(JSON.stringify(DEFAULTS))}
+ catch(e){return JSON.parse(JSON.stringify(DEFAULTS))}
+}
+
+function rupiah(n){
+ return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(n)
+}
+
+function loginAdmin(){
+ let pass=localStorage.getItem("zamqisAdminPassword")||INITIAL_PASS;
+ if(document.getElementById("username").value===USER&&document.getElementById("password").value===pass){
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  loadAll();
+ }else{
+  document.getElementById("error").textContent="Username atau password salah.";
+ }
+}
+
+function logout(){
+ document.getElementById("dashboard").classList.add("hidden");
+ document.getElementById("login").classList.remove("hidden");
+ document.getElementById("password").value="";
+}
+
+function loadAll(){
+ document.getElementById("waNumber").value=localStorage.getItem("zamqisWA")||"6281234567890";
+ loadBrandPreviews();
+
+ let q=localStorage.getItem("zamqisQRIS");
+ let img=document.getElementById("qrisPreview");
+
+ if(q){
+  img.src=q;
+  img.classList.remove("hidden");
+ }else{
+  img.classList.add("hidden");
+ }
+
+ renderPackages();
+ renderOrders();
+ stats();
+}
+
+const BRAND_FILES=[
+ ['bannerFile','zamqisBanner'],
+ ['mlFile','zamqisLogoML'],
+ ['pubgFile','zamqisLogoPUBG'],
+ ['ffFile','zamqisLogoFF']
+];
+
+function compressImage(file){
+ return new Promise((resolve,reject)=>{
+  if(!file||!file.type.startsWith('image/')){
+   reject(new Error('Pilih file gambar.'));
+   return;
+  }
+
+  let reader=new FileReader();
+
+  reader.onerror=()=>reject(new Error('Gagal membaca gambar.'));
+
+  reader.onload=()=>{
+   let img=new Image();
+
+   img.onerror=()=>reject(new Error('File gambar tidak dapat dibuka.'));
+
+   img.onload=()=>{
+    let scale=Math.min(1,1500/img.width,900/img.height);
+    let canvas=document.createElement('canvas');
+
+    canvas.width=Math.round(img.width*scale);
+    canvas.height=Math.round(img.height*scale);
+
+    canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+    resolve(canvas.toDataURL('image/jpeg',.78));
+   };
+
+   img.src=reader.result;
+  };
+
+  reader.readAsDataURL(file);
+ });
+}
+
+function loadBrandPreviews(){
+ [
+  ['zamqisBanner','bannerPreview'],
+  ['zamqisLogoML','mlPreview'],
+  ['zamqisLogoPUBG','pubgPreview'],
+  ['zamqisLogoFF','ffPreview']
+ ].forEach(([key,id])=>{
+  let val=localStorage.getItem(key);
+  let el=document.getElementById(id);
+
+  if(!el)return;
+
+  if(val){
+   el.src=val;
+   el.classList.remove('hidden');
+  }else{
+   el.removeAttribute('src');
+   el.classList.toggle('hidden',id==='bannerPreview');
+  }
+ });
+}
+
+async function saveBrandImages(){
+ let changed=0;
+
+ try{
+  for(let [inputId,key] of BRAND_FILES){
+   let file=document.getElementById(inputId).files[0];
+
+   if(file){
+    let data=await compressImage(file);
+    localStorage.setItem(key,data);
+    changed++;
+    document.getElementById(inputId).value='';
+   }
+  }
+
+  loadBrandPreviews();
+
+  if(changed===0){
+   alert('Pilih minimal satu gambar terlebih dahulu.');
+   return;
+  }
+
+  alert('Banner/logo berhasil disimpan. Buka halaman pembeli di browser yang sama untuk melihat perubahan.');
+ }catch(err){
+  alert('Gagal menyimpan gambar: '+err.message+' Pastikan ruang penyimpanan browser masih tersedia.');
+ }
+}
+
+function removeAsset(key,previewId){
+ if(!confirm('Hapus gambar ini?'))return;
+
+ localStorage.removeItem(key);
+
+ let el=document.getElementById(previewId);
+ el.removeAttribute('src');
+
+ if(previewId==='bannerPreview')el.classList.add('hidden');
+
+ alert('Gambar dihapus. Muat ulang halaman pembeli untuk melihat perubahan.');
+}
+
+function saveSettings(){
+ let wa=document.getElementById("waNumber").value.trim();
+ let file=document.getElementById("qrisFile").files[0];
+
+ if(!wa){
+  alert("Nomor WhatsApp wajib diisi.");
+  return;
+ }
+
+ let clean=wa.replace(/\D/g,"");
+
+ if(clean.length<9){
+  alert("Nomor WhatsApp tidak valid.");
+  return;
+ }
+
+ localStorage.setItem("zamqisWA",clean);
+
+ if(!file){
+  alert("Nomor WhatsApp berhasil disimpan.");
+  return;
+ }
+
+ if(file.size>700000){
+  alert("Ukuran gambar QRIS maksimal 700 KB.");
+  return;
+ }
+
+ let reader=new FileReader();
+
+ reader.onload=e=>{
+  try{
+   localStorage.setItem("zamqisQRIS",e.target.result);
+   loadAll();
+   alert("Pengaturan dan QRIS berhasil disimpan.");
+  }catch(err){
+   alert("Penyimpanan gagal. Coba gambar lebih kecil.");
+  }
+ };
+
+ reader.readAsDataURL(file);
+}
+
+function removeQRIS(){
+ if(confirm("Hapus QRIS?")){
+  localStorage.removeItem("zamqisQRIS");
+  document.getElementById("qrisFile").value="";
+  loadAll();
+ }
+}
+
+function addPackage(){
+ let g=document.getElementById("game").value;
+ let n=document.getElementById("name").value.trim();
+ let p=Number(document.getElementById("price").value);
+
+ if(!n||!Number.isFinite(p)||p<=0){
+  alert("Isi nama paket dan harga dengan benar.");
+  return;
+ }
+
+ let d=prices();
+ d[g]=d[g]||[];
+ d[g].push([n,p]);
+
+ localStorage.setItem("zamqisPrices",JSON.stringify(d));
+
+ document.getElementById("name").value="";
+ document.getElementById("price").value="";
+
+ renderPackages();
+ stats();
+}
+
+function deletePackage(g,i){
+ if(!confirm("Hapus paket ini?"))return;
+
+ let d=prices();
+ d[g].splice(i,1);
+
+ localStorage.setItem("zamqisPrices",JSON.stringify(d));
+
+ renderPackages();
+ stats();
+}
+
+function renderPackages(){
+ let d=prices();
+ let html="";
+
+ Object.keys(d).forEach(g=>{
+  html+=`<h3>${g}</h3>`;
+
+  d[g].forEach((p,i)=>{
+   html+=`
+   <div class="item">
+    <span>
+     <b>${p[0]}</b><br>
+     <small>${rupiah(p[1])}</small>
+    </span>
+    <button class="btn danger" onclick="deletePackage('${g}',${i})">HAPUS</button>
+   </div>`;
+  });
+ });
+
+ document.getElementById("packageList").innerHTML=html||"Belum ada paket.";
+}
+
+function resetPrices(){
+ if(confirm("Kembalikan semua paket ke harga awal?")){
+  localStorage.setItem("zamqisPrices",JSON.stringify(DEFAULTS));
+  renderPackages();
+  stats();
+ }
+}
+
+function renderOrders(){
+ let orders=[];
+
+ try{
+  orders=JSON.parse(localStorage.getItem("zamqisOrders")||"[]");
+ }catch(e){}
+
+ document.getElementById("orderList").innerHTML=orders.length
+ ?orders.slice().reverse().map(o=>`
+  <div class="item">
+   <span>
+    <b>${o.game} - ${o.package}</b><br>
+    <small>${o.date} • ${o.nick} • ID: ${o.id} • ${rupiah(o.total)}</small>
+   </span>
+  </div>
+ `).join("")
+ :"Belum ada pesanan tersimpan di browser ini.";
+}
+
+function clearOrders(){
+ if(confirm("Hapus riwayat pesanan lokal?")){
+  localStorage.removeItem("zamqisOrders");
+  renderOrders();
+  stats();
+ }
+}
+
+function stats(){
+ let d=prices();
+ let count=Object.values(d).reduce((a,b)=>a+b.length,0);
+ let orders=[];
+
+ try{
+  orders=JSON.parse(localStorage.getItem("zamqisOrders")||"[]");
+ }catch(e){}
+
+ document.getElementById("statPackages").textContent=count;
+ document.getElementById("statOrders").textContent=orders.length;
+ document.getElementById("statQRIS").textContent=localStorage.getItem("zamqisQRIS")?"Aktif":"Belum diatur";
+}
+
+function changePassword(){
+ let p=document.getElementById("newPassword").value;
+
+ if(p.length<8){
+  alert("Password minimal 8 karakter.");
+  return;
+ }
+
+ localStorage.setItem("zamqisAdminPassword",p);
+ document.getElementById("newPassword").value="";
+ alert("Password berhasil diganti.");
+}
+
+document.getElementById("qrisFile").addEventListener("change",function(){
+ let f=this.files[0];
+ if(!f)return;
+
+ if(f.size>700000){
+  alert("Ukuran maksimal 700 KB.");
+  this.value="";
+  return;
+ }
+
+ let r=new FileReader();
+
+ r.onload=e=>{
+  let img=document.getElementById("qrisPreview");
+  img.src=e.target.result;
+  img.classList.remove("hidden");
+ };
+
+ r.readAsDataURL(f);
+});
+</script>
+</body>
+</html>
